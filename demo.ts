@@ -1,12 +1,11 @@
-import { DiagnosticsFrameAnalyzer, DiagnosticsFrameRenderer } from './@camera-processor/diagnostics';
 import {
   VIRTUAL_BACKGROUND_TYPE,
+  RENDER_PIPELINE,
   SEGMENTATION_BACKEND,
-  SegmentationFrameAnalyzer,
-  VirtualBackgroundFrameRenderer
-} from './@camera-processor/virtual-background';
-import CameraProcessor from './camera-processor';
-import createModel from './@camera-processor/tflite-helper';
+  SegmentationAnalyzer,
+  VirtualBackgroundRenderer
+} from '@camera-processor/virtual-background';
+import CameraProcessor from 'camera-processor';
 
 async function getCameraStream() {
   return await navigator.mediaDevices.getUserMedia({ video: true });
@@ -26,17 +25,15 @@ async function main(): Promise<void> {
   camera_processor.start();
 
   // prettier-ignore
-  const segmentation_analyzer = new SegmentationFrameAnalyzer(SEGMENTATION_BACKEND.MLKit, false);
+  const segmentation_analyzer = new SegmentationAnalyzer(SEGMENTATION_BACKEND.MLKit);
   segmentation_analyzer.loadModel({
     modelPath: '/public/model/selfie.tflite',
     modulePath: '/public/tflite/'
   });
 
-  camera_processor.addAnalyzer('diagnostics', new DiagnosticsFrameAnalyzer());
   camera_processor.addAnalyzer('segmentation', segmentation_analyzer);
 
-  const background_renderer = camera_processor.addRenderer(new VirtualBackgroundFrameRenderer());
-  camera_processor.addRenderer(new DiagnosticsFrameRenderer());
+  const background_renderer = camera_processor.addRenderer(new VirtualBackgroundRenderer(RENDER_PIPELINE._2D));
 
   const background_image = new Image();
   background_image.src = '/public/background/background.jpg';
@@ -44,11 +41,10 @@ async function main(): Promise<void> {
   background_renderer.setBackground(VIRTUAL_BACKGROUND_TYPE.Image, background_image);
   background_renderer.setRenderSettings({ contourFilter: 'blur(4px)' });
 
-  video.srcObject = camera_processor.renderer.stream;
+  video.srcObject = camera_processor.getOutputStream();
   video.play();
 
   (window as any).camera_processor = camera_processor;
-  (window as any).createModel = createModel;
 }
 
 window.addEventListener('DOMContentLoaded', main);
