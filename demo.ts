@@ -17,6 +17,13 @@ type AnalyzerData = {
 };
 
 async function main(): Promise<void> {
+  const background_image = new Image();
+  background_image.src = '/public/background/background.jpg';
+  await new Promise((resolve, reject) => {
+    background_image.onload = resolve;
+    background_image.onerror = _ => reject(`Failed loading the background image: "${background_image.src}"`);
+  });
+
   const video = document.querySelector('#camera-video') as HTMLVideoElement;
   const camera_stream = await getCameraStream();
 
@@ -34,9 +41,6 @@ async function main(): Promise<void> {
   camera_processor.addAnalyzer('segmentation', segmentation_analyzer);
 
   const background_renderer = camera_processor.addRenderer(new VirtualBackgroundRenderer(RENDER_PIPELINE._2D));
-
-  const background_image = new Image();
-  background_image.src = '/public/background/background.jpg';
 
   background_renderer.setBackground(VIRTUAL_BACKGROUND_TYPE.Image, background_image);
   background_renderer.setRenderSettings({ contourFilter: 'blur(4px)' });
