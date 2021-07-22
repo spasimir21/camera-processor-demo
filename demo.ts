@@ -24,20 +24,18 @@ async function main(): Promise<void> {
     background_image.onerror = _ => reject(`Failed loading the background image: "${background_image.src}"`);
   });
 
+  // prettier-ignore
+  const segmentation_analyzer = new SegmentationAnalyzer(SEGMENTATION_BACKEND.MLKit);
+  await segmentation_analyzer.loadModel({
+    modelPath: '/public/model/selfie.tflite',
+    modulePath: '/public/tflite/'
+  });
+
   const video = document.querySelector('#camera-video') as HTMLVideoElement;
   const camera_stream = await getCameraStream();
 
   const camera_processor = new CameraProcessor<AnalyzerData>();
   camera_processor.setCameraStream(camera_stream);
-  camera_processor.start();
-
-  // prettier-ignore
-  const segmentation_analyzer = new SegmentationAnalyzer(SEGMENTATION_BACKEND.MLKit);
-  segmentation_analyzer.loadModel({
-    modelPath: '/public/model/selfie.tflite',
-    modulePath: '/public/tflite/'
-  });
-
   camera_processor.addAnalyzer('segmentation', segmentation_analyzer);
 
   const background_renderer = camera_processor.addRenderer(new VirtualBackgroundRenderer(RENDER_PIPELINE._2D));
@@ -45,8 +43,10 @@ async function main(): Promise<void> {
   background_renderer.setBackground(VIRTUAL_BACKGROUND_TYPE.Image, background_image);
   background_renderer.setRenderSettings({ contourFilter: 'blur(4px)' });
 
+  await camera_processor.start();
   video.srcObject = camera_processor.getOutputStream();
-  video.play();
+  await video.play();
+
 
   (window as any).camera_processor = camera_processor;
 }
