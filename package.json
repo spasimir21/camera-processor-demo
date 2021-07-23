@@ -23,7 +23,7 @@
   "author": "Spasimir Pavlov",
   "license": "MIT",
   "dependencies": {
-    "@camera-processor/virtual-background": "^0.9.3",
-    "camera-processor": "^0.9.0"
+    "@camera-processor/virtual-background": "^0.9.5",
+    "camera-processor": "^0.9.1"
   }
 }

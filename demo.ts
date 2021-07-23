@@ -11,7 +11,7 @@ function getCameraStream(): Promise<MediaStream> {
   return navigator.mediaDevices.getUserMedia({ video: true });
 }
 
-function loadImage(path: string): Promise<Image> {
+function loadImage(path: string): Promise<HTMLImageElement> {
   const background_image = new Image();
   background_image.src = path;
   return new Promise((resolve, reject) => {
