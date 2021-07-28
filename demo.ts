@@ -49,6 +49,7 @@ async function main(): Promise<void> {
   await video.play();
 
   (window as any).camera_processor = camera_processor;
+  (window as any).video = video;
 }
 
 window.addEventListener('DOMContentLoaded', main);
