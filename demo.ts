@@ -26,7 +26,6 @@ type AnalyzerData = {
 };
 
 async function main(): Promise<void> {
-  // prettier-ignore
   const segmentation_analyzer = new SegmentationAnalyzer(SEGMENTATION_BACKEND.MLKit);
   await segmentation_analyzer.loadModel({
     modelPath: '/public/model/selfie.tflite',
