@@ -21,7 +21,6 @@ function loadImage(path: string): Promise<HTMLImageElement> {
 }
 
 type AnalyzerData = {
-  diagnostics: { frameTime: number; fps: number };
   segmentation: { type: number; data: Uint8Array | Float32Array | null };
 };
 
