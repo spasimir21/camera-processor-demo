@@ -31,7 +31,7 @@ async function main(): Promise<void> {
     modulePath: '/public/tflite/'
   });
 
-  const background_image = await loadImage('/public/background/background.jpg');
+  const background_image = await loadImage('/public/background/background3.jpg');
   const background_renderer = new VirtualBackgroundRenderer(RENDER_PIPELINE._2D);
   background_renderer.setBackground(VIRTUAL_BACKGROUND_TYPE.Image, background_image);
   background_renderer.setRenderSettings({ contourFilter: 'blur(4px)' });
